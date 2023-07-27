@@ -75,7 +75,7 @@ class MT5:
     def get_tickers(self, params={}):
         if "ticker" in params:
             sym = mt5.symbol_info(params["ticker"])
-            return filter_props(sym._asdict(), params["filter_props"])
+            return filter_props(sym._asdict(), params["filter_props"]) if 'filter_props' in params else sym
 
         if "group" in params:
             symbols = mt5.symbols_get(group=params["group"])
