@@ -18,7 +18,7 @@ import logging
 
 class MT5:
     _mt5 = mt5
-    magic: None
+    magic = None
     timezone = defaults.timezone
     connected = False
     debug = False
