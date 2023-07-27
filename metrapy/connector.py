@@ -67,7 +67,7 @@ class MT5:
             self.debug = True
 
         if "magic" in params:
-            self.magic = params['magic_id']
+            self.magic = params['magic']
 
     def get_account_info(self):
         return mt5.account_info()._asdict()
@@ -367,10 +367,12 @@ class MT5:
             return type
 
         request = {
-            "magic": self.magic,
             "symbol": params["ticker"],
             "action": order_types_map[params["order_type"]],
         }
+
+        if self.magic is not None:
+            request['magic'] = self.magic
 
         if "trade_type" in params:
             request["type"] = position_type[get_order_type()]
