@@ -132,7 +132,7 @@ class MT5:
                 get_current_time().strftime("%m/%d/%Y, %H:%M:%S", len(candles)),
             )
 
-        candles_df = get_candles_df(candles, timezone= params['timezone'] if "timezone" in params else None)
+        candles_df = get_candles_df(candles, timezone= params['timezone'] if "timezone" in params else self.timezone or None)
 
         return {"candles": candles, "last_error": None, "params": params, 'candles_df': candles_df}
 
@@ -166,7 +166,7 @@ class MT5:
                     get_current_time().strftime("%m/%d/%Y, %H:%M:%S", len(candle_raw)),
                 )
         
-        candle = get_candles_df(candle_raw, timezone= params['timezone'] if "timezone" in params else None)
+        candle = get_candles_df(candle_raw, timezone=  params['timezone'] if "timezone" in params else self.timezone or None)
         
         return {"candle_raw": candle[0] if len(candle) > 0 else None, "last_error": None, "params": params, 'candles_df': candle.iloc[0] if candle else None}
 
