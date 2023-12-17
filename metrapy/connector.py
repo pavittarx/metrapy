@@ -18,10 +18,11 @@ import logging
 
 class MT5:
     _mt5 = mt5
-    magic = None
+    magic: int = None
     timezone = defaults.timezone
     connected = False
     debug = False
+    store = None
     maps = {
         'timeframe': mt5tf_map,
         'order': order_types_map,
@@ -31,6 +32,11 @@ class MT5:
     }
 
     def __init__(self, params, opts={}):
+        if "magic" not in params: 
+            raise Exception("Please provide magic number for your EA.")
+        
+        self.magic = params["magic"]
+
         if "login" not in params:
             raise Exception("Please provide MT5 login.")
 
@@ -65,9 +71,6 @@ class MT5:
 
         if "debug" in opts:
             self.debug = True
-
-        if "magic" in params:
-            self.magic = params['magic']
 
     def get_account_info(self):
         return mt5.account_info()._asdict()
@@ -205,7 +208,7 @@ class MT5:
             '_request': request
         }
 
-    def get_positions(self, params):
+    def get_positions(self, params = {}):
         request = {}
 
         if "ticker" in params:
@@ -240,7 +243,7 @@ class MT5:
             '_request': request
         }
 
-    def get_history(self, params):
+    def get_history(self, params = {}):
 
         request = {}
         
@@ -257,7 +260,7 @@ class MT5:
             pos = params["position"]
 
             if type(pos) != int:
-                raise Exception("position parameter should be an integer.")
+                raise Exception("Position parameter should be an integer.")
 
             request['position'] = pos
 
@@ -293,7 +296,7 @@ class MT5:
             '_request': request
         }
     
-    def get_history_deals(self, params):
+    def get_history_deals(self, params = {}):
 
         request = {}
         
@@ -471,4 +474,32 @@ class MT5:
             'last_error': None,
             'params': params,
             '_request': request
+        }
+
+
+    def close_position(self, symbol, ticket):
+        res = mt5.Close(symbol, ticket=ticket)
+
+        if not res:
+            return {
+                'magic_id': self.magic,
+                'identifier': id,
+                'result': res,
+                'last_error': mt5.last_error(),
+                'params': {
+                    symbol,
+                    ticket
+                },
+                '_request': None
+            }
+
+        return {
+            "identifier": id,
+            "magic_id": self.magic,
+            "last_error": None, 
+            "params": {
+                symbol,
+                ticket
+            },
+            "result": res
         }
